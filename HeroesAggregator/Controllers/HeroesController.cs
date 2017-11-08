@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using HotSLogs.Scraper.Models;
 using HotSLogs.Scraper.Scrapers;
@@ -16,6 +13,10 @@ namespace HeroesAggregator.Controllers
             if (string.IsNullOrWhiteSpace(id))
                 return View((string)null);
 
+            var key = $"team_id_{id}";
+            if (PrimitiveCache.HasKey(key))
+                return View(PrimitiveCache.FetchItem<TeamModel>(key));
+
             var scraper = new HeroesLoungeScraper();
 
             TeamModel team;
@@ -23,10 +24,12 @@ namespace HeroesAggregator.Controllers
             {
                 team = scraper.ScrapeTeam(id);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 team = new TeamModel { Name = null };
             }
+
+            PrimitiveCache.AddOrUpdateItem(key, team);
 
             return View(team);
         }

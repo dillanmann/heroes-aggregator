@@ -1,10 +1,23 @@
-﻿<div class="jumbotron text-center">
+﻿@using HotSLogs.Scraper.Scrapers;
+@using HotSLogs.Scraper.Models
+
+<div class="jumbotron text-center">
     <h1>Heroes Aggregator</h1>
     <p class="lead">Shows aggregated MMRs for teams competing in the Heroes Lounge tournament</p>
 
     <div class="form-group">
         <div class="row">
-            <input type="text" id="team-id" placeholder="Team ID - hover for help" title="Last part of url from Heroes Lounge &#013;e.g. for heroeslounge.gg/team/view/George%20Cream &#013;id is 'George%20Cream' or 'George Cream'"/>
+            <input type="text" id="team-id" placeholder="Team ID - hover for help" title="Last part of url from Heroes Lounge &#013;e.g. for heroeslounge.gg/team/view/George%20Cream &#013;id is 'George%20Cream' or 'George Cream'" list="team-names" autocomplete="off"/>
+            <datalist id="team-names">
+                @if (!PrimitiveCache.HasKey("team_names")) {
+                    PrimitiveCache.AddOrUpdateItem("team_names", HeroesLoungeScraper.ScrapeTeamUrls().SelectMany(e => e.Value).ToList());
+                }
+
+                @foreach(var team in PrimitiveCache.FetchItem<List<TeamUrlModel>>("team_names"))
+                {
+                    <option value="@team.Url">@team.Name</option>
+                }
+            </datalist>
         </div>
         <div class="row">
             <button disabled class="btn btn-default" id="submit-team-id">Show me the MMR</button>
