@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Net;
 using HeroesAggregator.Scraping.Models;
 
 namespace HeroesAggregator.Scraping.Scrapers
@@ -35,10 +36,10 @@ namespace HeroesAggregator.Scraping.Scrapers
                 var gamesPlayed = gamesPlayedElem.InnerText;
                 var winPercent = winPercentElem.InnerText.Replace("%", "");
 
-                stats.Add(new HeroStatsModel { Name = heroName, GamesPlayed = Convert.ToInt32(gamesPlayed), WinPercent = Convert.ToDouble(winPercent) });
+                stats.Add(new HeroStatsModel { Name = WebUtility.HtmlDecode(heroName), GamesPlayed = Convert.ToInt32(gamesPlayed), WinPercent = Convert.ToDouble(winPercent) });
             }
 
-            return new PlayerHeroesPreferenceModel { HeroStats = stats , PlayerId = playerId } ;
+            return new PlayerHeroesPreferenceModel { HeroStats = stats.OrderByDescending(e => e.GamesPlayed).ThenByDescending(e => e.WinPercent).ToList() , PlayerId = playerId } ;
         }
 
     }

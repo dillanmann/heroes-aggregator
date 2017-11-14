@@ -42,18 +42,31 @@
                             <input type="checkbox" class="row-select" />
                         </td>
                     </tr>
-                    foreach (var heroPref in player.Stats.HeroStats)
-                    {
-                    <tr class="player-collapse in @target">
-                            <td>Hero: @heroPref.Name</td>
-                            <td>Played: @heroPref.GamesPlayed</td>
-                            <td>Win %: @heroPref.WinPercent</td>
+                    <tr class="player-collapse @target">
+                        <td>
+                            <table class="table">
+                                <thead>
+                                    <th>Hero</th>
+                                    <th>Games Played</th>
+                                    <th>Win %</th>
+                                </thead>
+                                <tbody>
+                                    @foreach (var heroPref in player.Stats.HeroStats)
+                                    {
+                                    <tr>
+                                            <td>@heroPref.Name</td>
+                                            <td>@heroPref.GamesPlayed</td>
+                                            <td>@heroPref.WinPercent</td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                         </td>
                     </tr>
-                    }
 
                 }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
 
         <h3>@("Team MMR: " + Model.AverageMmr.ToString("0.00"))</h3>
         <h3 id="selected-mmr"></h3>
