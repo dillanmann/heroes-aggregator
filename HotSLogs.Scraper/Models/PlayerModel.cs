@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace HotSLogs.Scraper.Models
+namespace HeroesAggregator.Scraping.Models
 {
     public class PlayerModel
     {
@@ -18,18 +17,24 @@ namespace HotSLogs.Scraper.Models
         public string Role { get; set; }
         public string BattleTag { get; set; }
         public string PlayerName { get; set; }
+        public string HotSLogsId { get; set; }
+
+        public PlayerHeroesPreferenceModel Stats { get; private set; }
         
-        public PlayerModel(Dictionary<string, object> details)
+        public PlayerModel(Dictionary<string, object> details, PlayerHeroesPreferenceModel stats = null)
         {
+            HotSLogsId = details["PlayerId"].ToString();
             PlayerName = details["PlayerName"].ToString();
             BattleTag = details["BattleTag"].ToString();
             Role = details.ContainsKey("Role") ? details["Role"].ToString() : null;
 
-            var stats = (Dictionary<MmrWeightingType, int>)details["Stats"];
+            Stats = stats;
 
-            TeamLeagueMmr = stats.ContainsKey(MmrWeightingType.TeamLeague) ? stats[MmrWeightingType.TeamLeague] : -1;
-            HeroLeagueMmr = stats.ContainsKey(MmrWeightingType.HeroLeague) ? stats[MmrWeightingType.HeroLeague] : -1;
-            UnrankedDraftMmr = stats.ContainsKey(MmrWeightingType.UnrankedDraft) ? stats[MmrWeightingType.UnrankedDraft] : -1;
+            var mmrStats = (Dictionary<MmrWeightingType, int>)details["Stats"];
+
+            TeamLeagueMmr = mmrStats.ContainsKey(MmrWeightingType.TeamLeague) ? mmrStats[MmrWeightingType.TeamLeague] : -1;
+            HeroLeagueMmr = mmrStats.ContainsKey(MmrWeightingType.HeroLeague) ? mmrStats[MmrWeightingType.HeroLeague] : -1;
+            UnrankedDraftMmr = mmrStats.ContainsKey(MmrWeightingType.UnrankedDraft) ? mmrStats[MmrWeightingType.UnrankedDraft] : -1;
         }
     }
 }

@@ -32,4 +32,11 @@
     });
 
     $('.player-row .row-select').change(updateSelectedMmr);
+
+    $("button.collapse-player-row").click(function (ev) {
+        ev.preventDefault();
+        var attr = this.getAttribute('data-target');
+        $(attr).toggleClass("in");
+    });
+
 });

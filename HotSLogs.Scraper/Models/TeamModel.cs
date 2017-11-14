@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
-namespace HotSLogs.Scraper.Models
+namespace HeroesAggregator.Scraping.Models
 {
     public class TeamModel
     {

@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeroesAggregator", "HeroesAggregator\HeroesAggregator.csproj", "{DCAEAE1A-4A84-46B0-ADED-13DC0C9E5078}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotSLogs.Scraper", "HotSLogs.Scraper\HotSLogs.Scraper.csproj", "{8568BA0D-ACC9-4E5D-8BF8-E903A07BFAEC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeroesAggregator.Scraping", "HotSLogs.Scraper\HeroesAggregator.Scraping.csproj", "{8568BA0D-ACC9-4E5D-8BF8-E903A07BFAEC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeroesAggregator.Scraping.Tests", "HeroesAggregator.Scraping.Tests\HeroesAggregator.Scraping.Tests.csproj", "{AD26CE7B-0709-4BC6-A46D-72222335A627}"
 EndProject
 Global
 	GlobalSection(Performance) = preSolution
@@ -24,9 +26,22 @@ Global
 		{8568BA0D-ACC9-4E5D-8BF8-E903A07BFAEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8568BA0D-ACC9-4E5D-8BF8-E903A07BFAEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8568BA0D-ACC9-4E5D-8BF8-E903A07BFAEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD26CE7B-0709-4BC6-A46D-72222335A627}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD26CE7B-0709-4BC6-A46D-72222335A627}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD26CE7B-0709-4BC6-A46D-72222335A627}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD26CE7B-0709-4BC6-A46D-72222335A627}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(Performance) = preSolution
 		HasPerformanceSessions = true

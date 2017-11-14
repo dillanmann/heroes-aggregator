@@ -4,7 +4,7 @@ namespace HeroesAggregator
 {
     public static class PrimitiveCache
     {
-        private static Dictionary<string, object> _cache = new Dictionary<string, object>();
+        private static readonly Dictionary<string, object> _cache = new Dictionary<string, object>();
 
         /// <summary>
         ///     Fetch an item from the cache as the given type.
@@ -25,7 +25,10 @@ namespace HeroesAggregator
         /// </summary>
         /// <param name="key"></param>
         /// <param name="item"></param>
-        public static void AddOrUpdateItem(string key, object item) => _cache[key] = item;
+        public static void AddOrUpdateItem(string key, object item)
+        {
+            _cache[key] = item;
+        }
 
         /// <summary>
         ///     If the given key is present in the cache.

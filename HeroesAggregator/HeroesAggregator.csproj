@@ -256,9 +256,9 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HotSLogs.Scraper\HotSLogs.Scraper.csproj">
+    <ProjectReference Include="..\HotSLogs.Scraper\HeroesAggregator.Scraping.csproj">
       <Project>{8568ba0d-acc9-4e5d-8bf8-e903a07bfaec}</Project>
-      <Name>HotSLogs.Scraper</Name>
+      <Name>HeroesAggregator.Scraping</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

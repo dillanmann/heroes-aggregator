@@ -1,4 +1,4 @@
-﻿@model HotSLogs.Scraper.Models.TeamModel
+﻿@model HeroesAggregator.Scraping.Models.TeamModel
 
 @{
     ViewBag.Title = "Team MMR - " + Model.Name;
@@ -13,6 +13,7 @@
         <table class="table table-striped table-bordered table-hover">
             <thead class="thead-inverse">
                 <tr>
+                    <th></th>
                     <th>Player Name</th>
                     <th>Battle Tag</th>
                     <th>Hero League MMR</th>
@@ -27,7 +28,10 @@
             <tbody>
                 @foreach (var player in players)
                 {
-                    <tr id="@player.PlayerName" class="player-row">
+                    var target = "heroes-pref-" + player.PlayerName;
+
+                    <tr id="@player.PlayerName" data-toggle="player-collapse" class="player-row" data-target=".@target">
+                        <td><button class="collapse-player-row" data-target=".@target">Show/Hide Hero Stats</button></td>
                         <td>@player.PlayerName</td>
                         <td>@player.BattleTag</td>
                         <td>@( player.HeroLeagueMmr == -1 ? "" : player.HeroLeagueMmr.ToString() )</td>
@@ -38,6 +42,15 @@
                             <input type="checkbox" class="row-select" />
                         </td>
                     </tr>
+                    foreach (var heroPref in player.Stats.HeroStats)
+                    {
+                    <tr class="player-collapse in @target">
+                            <td>Hero: @heroPref.Name</td>
+                            <td>Played: @heroPref.GamesPlayed</td>
+                            <td>Win %: @heroPref.WinPercent</td>
+                    </tr>
+                    }
+
                 }
             </tbody>
         </table>

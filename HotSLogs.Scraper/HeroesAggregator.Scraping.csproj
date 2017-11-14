@@ -7,8 +7,8 @@
     <ProjectGuid>{8568BA0D-ACC9-4E5D-8BF8-E903A07BFAEC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HotSLogs.Scraper</RootNamespace>
-    <AssemblyName>HotSLogs.Scraper</AssemblyName>
+    <RootNamespace>HeroesAggregator.Scraping</RootNamespace>
+    <AssemblyName>HeroesAggregator.Scraping</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -56,12 +56,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\HeroStatsModel.cs" />
+    <Compile Include="Models\PlayerHeroesPreferenceModel.cs" />
     <Compile Include="Models\PlayerModel.cs" />
     <Compile Include="Models\TeamModel.cs" />
     <Compile Include="Models\TeamUrlModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scrapers\HeroesLoungeScraper.cs" />
     <Compile Include="HotSLogsApiInterface.cs" />
+    <Compile Include="Scrapers\HotSLogsScraper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

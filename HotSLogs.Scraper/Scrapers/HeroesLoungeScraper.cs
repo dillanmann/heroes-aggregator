@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using HotSLogs.Scraper.Models;
+using HeroesAggregator.Scraping.Models;
 
-namespace HotSLogs.Scraper.Scrapers
+namespace HeroesAggregator.Scraping.Scrapers
 {
     public class HeroesLoungeScraper
     {
@@ -50,14 +50,19 @@ namespace HotSLogs.Scraper.Scrapers
             var playerModels = new List<PlayerModel>();
             foreach(var player in players)
             {
-                var stats = hotsLogsInterface.GetPlayerStats(player.Value);
+                var playerId = string.Empty;
+                var stats = hotsLogsInterface.GetPlayerStats(player.Value, out playerId);
                 var details = new Dictionary<string, object>
                 {
+                    { "PlayerId", playerId },
                     { "PlayerName" , player.Key },
                     { "BattleTag" , player.Value },
                     { "Stats" , stats }
                 };
-                playerModels.Add(new PlayerModel(details));
+
+                var playerStats = HotSLogsScraper.ScrapeHeroPreferences(playerId);
+
+                playerModels.Add(new PlayerModel(details, playerStats));
             }
 
             return new TeamModel

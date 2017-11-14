@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RestSharp;
 
-namespace HotSLogs.Scraper
+namespace HeroesAggregator.Scraping
 {
     internal enum MmrWeightingType
     {
@@ -34,13 +34,15 @@ namespace HotSLogs.Scraper
             return string.Format(url, region, battleTag);
         }
 
-        private Dictionary<MmrWeightingType, int> GetPlayerStats(string url)
+        private Dictionary<MmrWeightingType, int> GetPlayerStats(string url, out string playerId)
         {
             var request = new RestRequest(url, Method.GET);
             var response = _restClient.Execute(request);
             var responseText = response.Content;
 
             var responseJson = JObject.Parse(responseText);
+            var id = responseJson["PlayerID"];
+            playerId = id.ToString();
             var leaderBoards = responseJson["LeaderboardRankings"];
 
             var stats = new Dictionary<MmrWeightingType, int>();
@@ -58,10 +60,10 @@ namespace HotSLogs.Scraper
             return stats;
         }
 
-        public Dictionary<MmrWeightingType, int> GetPlayerStats(string battleTag, int region = 2)
+        public Dictionary<MmrWeightingType, int> GetPlayerStats(string battleTag, out string playerId, int region = 2)
         {
             var url = FormatUrl(_urlArgs, battleTag, region);
-            var stats = GetPlayerStats(url);
+            var stats = GetPlayerStats(url, out playerId);
 
             if (stats == null)
                 Console.WriteLine($"Got failed response from HotSLogs for player {battleTag}");
