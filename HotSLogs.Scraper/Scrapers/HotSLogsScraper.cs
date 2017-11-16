@@ -16,7 +16,7 @@ namespace HeroesAggregator.Scraping.Scrapers
         public static PlayerHeroesPreferenceModel ScrapeHeroPreferences(string playerId)
         {
             if (string.IsNullOrWhiteSpace(playerId))
-                throw new ArgumentNullException(playerId);
+                return null;
 
             var url = string.Format(_playerDetailsUrlFormat, playerId);
 

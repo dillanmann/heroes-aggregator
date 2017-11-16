@@ -7,7 +7,7 @@ using HeroesAggregator.Scraping.Models;
 
 namespace HeroesAggregator.Scraping.Scrapers
 {
-    public class HeroesLoungeScraper
+    public static class HeroesLoungeScraper
     {
         private static readonly string _rootHeroesLoungeDomain = "https://heroeslounge.gg/";
         private static readonly string _rootTeamDetailsUrl = $"{_rootHeroesLoungeDomain}/team/view/";
@@ -15,7 +15,7 @@ namespace HeroesAggregator.Scraping.Scrapers
         private static readonly string _currentSeason = "5";
         private static readonly List<string> _divisions = new List<string> { "1", "2", "3", "4", "5" };
 
-        public TeamModel ScrapeTeam(string teamId)
+        public static TeamModel ScrapeTeam(string teamId)
         {
             var teamUrl = _rootTeamDetailsUrl + (teamId.StartsWith("/") ? teamId.Skip(1) : teamId);
             

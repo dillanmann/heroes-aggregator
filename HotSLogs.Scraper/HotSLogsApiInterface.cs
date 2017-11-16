@@ -40,6 +40,12 @@ namespace HeroesAggregator.Scraping
             var response = _restClient.Execute(request);
             var responseText = response.Content;
 
+            if(responseText == null || responseText == "null")
+            {
+                playerId = string.Empty;
+                return null;
+            }
+
             var responseJson = JObject.Parse(responseText);
             var id = responseJson["PlayerID"];
             playerId = id.ToString();

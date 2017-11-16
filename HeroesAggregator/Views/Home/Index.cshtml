@@ -5,6 +5,10 @@
     <h1>Heroes Aggregator</h1>
     <p class="lead">Shows aggregated MMRs for teams competing in the Heroes Lounge tournament</p>
 
+    <div id="loader">
+        <img src="~/Content/ajax-loader.gif" style="display: none;" alt="Loader"/>
+    </div>
+
     <div class="form-group">
         <div class="row">
             <input type="text" id="team-id" placeholder="Team ID - hover for help" title="Last part of url from Heroes Lounge &#013;e.g. for heroeslounge.gg/team/view/George%20Cream &#013;id is 'George%20Cream' or 'George Cream'" list="team-names" autocomplete="off"/>

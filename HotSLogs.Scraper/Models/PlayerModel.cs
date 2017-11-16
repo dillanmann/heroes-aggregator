@@ -32,6 +32,12 @@ namespace HeroesAggregator.Scraping.Models
 
             var mmrStats = (Dictionary<MmrWeightingType, int>)details["Stats"];
 
+            if (mmrStats == null)
+            {
+                TeamLeagueMmr = HeroLeagueMmr = UnrankedDraftMmr = -1;
+                return;
+            }
+
             TeamLeagueMmr = mmrStats.ContainsKey(MmrWeightingType.TeamLeague) ? mmrStats[MmrWeightingType.TeamLeague] : -1;
             HeroLeagueMmr = mmrStats.ContainsKey(MmrWeightingType.HeroLeague) ? mmrStats[MmrWeightingType.HeroLeague] : -1;
             UnrankedDraftMmr = mmrStats.ContainsKey(MmrWeightingType.UnrankedDraft) ? mmrStats[MmrWeightingType.UnrankedDraft] : -1;

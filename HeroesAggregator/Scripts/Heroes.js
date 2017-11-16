@@ -27,12 +27,16 @@
 
     }
 
+    // Select all the available heroes when the 'select all' checkbox is checked
     $('.row-select-all').change(function () {
         $(this).closest('table').find('.row-select').prop('checked', $(this).is(':checked')).trigger('change');
     });
 
+    // When a player is selected/deselected, update the selected average MMR
     $('.player-row .row-select').change(updateSelectedMmr);
 
+
+    // Collapse/expand player hero stats tables
     $("button.collapse-player-row").click(function (ev) {
         ev.preventDefault();
         var attr = this.getAttribute('data-target');

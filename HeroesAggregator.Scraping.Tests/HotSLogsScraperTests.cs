@@ -16,5 +16,8 @@ namespace HeroesAggregator.Scraping.Tests
         {
             HotSLogsScraper.ScrapeHeroPreferences("459446");
         }
+
+        // todo 
+        // Test case for null coming from HotsLogs
     }
 }

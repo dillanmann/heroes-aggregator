@@ -51,13 +51,20 @@
                                     <th>Win %</th>
                                 </thead>
                                 <tbody>
-                                    @foreach (var heroPref in player.Stats.HeroStats)
+                                    @if (player.Stats == null)
                                     {
-                                    <tr>
-                                            <td>@heroPref.Name</td>
-                                            <td>@heroPref.GamesPlayed</td>
-                                            <td>@heroPref.WinPercent</td>
-                                    </tr>
+                                        <tr>Failed to find HotSLogs profile for player @player.PlayerName</tr>
+                                    }
+                                    else
+                                    {
+                                        foreach (var heroPref in player.Stats.HeroStats)
+                                        {
+                                        <tr>
+                                                <td>@heroPref.Name</td>
+                                                <td>@heroPref.GamesPlayed</td>
+                                                <td>@heroPref.WinPercent</td>
+                                        </tr>
+                                        }
                                     }
                                 </tbody>
                             </table>
@@ -70,6 +77,11 @@
 
         <h3>@("Team MMR: " + Model.AverageMmr.ToString("0.00"))</h3>
         <h3 id="selected-mmr"></h3>
+
+        <div>
+            <div id="recommmended-hero-bans"></div>
+            <div id="recommmended-map-bans"></div>
+        </div>
     }
     else
     { 
