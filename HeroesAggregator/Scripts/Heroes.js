@@ -1,5 +1,38 @@
 ﻿$(document).ready(function () {
 
+    var teamMmr = 0;
+    var players = 0;
+
+    (function getPlayerMmr() {
+        var urlRoot = '/heroes/playermmr?playerid='
+        $.each($('.player-row'), function (index, value) {
+            var url = urlRoot + $(value).attr('player-id');
+            $.getJSON(url, function (data) {
+                var jsonData = JSON.parse(data);
+                var heroLeague = jsonData['HeroLeague'] || 0; 
+                var teamLeague = jsonData['TeamLeague'] || 0;
+                var unrankedDraft = jsonData['UnrankedDraft'] || 0;
+                var weightedMmr = (0.5 * heroLeague) + (0.3 * teamLeague) + (0.2 * unrankedDraft);
+
+                $(value)
+                    .append($('<td/>').text(heroLeague))
+                    .append($('<td/>').text(teamLeague))
+                    .append($('<td/>').text(unrankedDraft))
+                    .append($('<td/>').text(weightedMmr.toFixed(0)).attr('class', 'weighted-mmr'))
+                    .append($('<td/>')
+                        .append($('<input/>').attr('type', 'checkbox').attr('class', 'row-select')));
+
+                updateTeamMmr(weightedMmr);
+            });
+        });
+    })();
+
+    function updateTeamMmr(mmr) {
+        ++players;
+        teamMmr += mmr;
+        $('#team-mmr').text('Team MMR: ' + (teamMmr / players).toFixed(0));
+    }
+
     function updateSelectedMmr() {
 
         var baseHeader = "Selected MMR: ";
@@ -21,7 +54,7 @@
             total += value;
         }
 
-        total = (total / selectedRows.length).toFixed(2);
+        total = (total / selectedRows.length).toFixed(0);
 
         $('#selected-mmr').text(baseHeader + total);
 
@@ -33,7 +66,8 @@
     });
 
     // When a player is selected/deselected, update the selected average MMR
-    $('.player-row .row-select').change(updateSelectedMmr);
+    $('div.container-fluid tbody').on('change', '.player-row .row-select', updateSelectedMmr);
+    //$('.player-row .row-select').change(updateSelectedMmr);
 
 
     // Collapse/expand player hero stats tables

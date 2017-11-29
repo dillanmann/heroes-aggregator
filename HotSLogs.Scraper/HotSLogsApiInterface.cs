@@ -11,45 +11,60 @@ using RestSharp;
 
 namespace HeroesAggregator.Scraping
 {
-    internal enum MmrWeightingType
+    /// <summary>
+    ///     HotSLogs MMR weightings
+    /// </summary>
+    public enum MmrWeightingType
     {
         HeroLeague = 0,
         TeamLeague,
         UnrankedDraft
     }
 
-    internal class HotSLogsApiInterface
+    /// <summary>
+    ///     Interface for interacting with the HotSLogs REST API.
+    /// </summary>
+    public class HotSLogsApiInterface
     {
-        private static string _rootUrl = "https://api.hotslogs.com/Public/";
-        private readonly static string _urlArgs = "Players/{0}/{1}";
-        private readonly string _rootUrlFormat = _rootUrl + _urlArgs ;
-        private readonly static RestClient _restClient = new RestClient(_rootUrl);
+        private const string _rootUrl = "https://api.hotslogs.com/Public/";
+        private const string _playerDetailsByBattleTagUrl = "Players/{0}/{1}";
+        private const string _playerDetailsByIdUrl = "Players/{0}";
+        private readonly RestClient _restClient = new RestClient(_rootUrl);
 
         private string FormatUrl(string url, string battleTag, int region = 2)
         {
             if (battleTag.Contains("#"))
                 battleTag = battleTag.Replace('#', '_');
 
-
             return string.Format(url, region, battleTag);
         }
 
-        private Dictionary<MmrWeightingType, int> GetPlayerStats(string url, out string playerId)
+        private JObject GetPlayerJson(string url)
         {
             var request = new RestRequest(url, Method.GET);
             var response = _restClient.Execute(request);
             var responseText = response.Content;
 
-            if(responseText == null || responseText == "null")
-            {
-                playerId = string.Empty;
+            if (responseText == null || responseText == "null")
                 return null;
-            }
 
-            var responseJson = JObject.Parse(responseText);
+            return JObject.Parse(responseText);
+        }
+
+        private Dictionary<MmrWeightingType, int> GetPlayerStats(string url, out string playerId)
+        {
+            var responseJson = GetPlayerJson(url);
             var id = responseJson["PlayerID"];
             playerId = id.ToString();
-            var leaderBoards = responseJson["LeaderboardRankings"];
+
+            var stats = ParsePlayerStats(responseJson);
+
+            return stats;
+        }
+
+        private Dictionary<MmrWeightingType, int> ParsePlayerStats(JObject json)
+        {
+            var leaderBoards = json["LeaderboardRankings"];
 
             var stats = new Dictionary<MmrWeightingType, int>();
 
@@ -66,9 +81,45 @@ namespace HeroesAggregator.Scraping
             return stats;
         }
 
+        /// <summary>
+        ///     Get the HotSLogs ID of a player from their battle tag and region.
+        /// </summary>
+        /// <param name="battleTag"></param>
+        /// <param name="region"></param>
+        /// <returns></returns>
+        public string PlayerIdFromBattleTag(string battleTag, int region = 2)
+        {
+            if (battleTag.Contains('#'))
+                battleTag = battleTag.Replace('#', '_');
+
+            var url = FormatUrl(_playerDetailsByBattleTagUrl, battleTag, region);
+            var responseJson = GetPlayerJson(url);
+
+            var id = responseJson["PlayerID"];
+            return id.ToString();
+        }
+
+        /// <summary>
+        ///     Get the player stats from a HotSLogs player id
+        /// </summary>
+        /// <param name="playerId">HotSLogs player id</param>
+        /// <returns></returns>
+        public Dictionary<MmrWeightingType, int> GetPlayerStats(string playerId)
+        {
+            var url = string.Format(_playerDetailsByIdUrl, playerId);
+            return ParsePlayerStats(GetPlayerJson(url));
+        }
+
+        /// <summary>
+        ///     Get the player stats from a battletag and region.
+        /// </summary>
+        /// <param name="battleTag"></param>
+        /// <param name="playerId"></param>
+        /// <param name="region"></param>
+        /// <returns></returns>
         public Dictionary<MmrWeightingType, int> GetPlayerStats(string battleTag, out string playerId, int region = 2)
         {
-            var url = FormatUrl(_urlArgs, battleTag, region);
+            var url = FormatUrl(_playerDetailsByBattleTagUrl, battleTag, region);
             var stats = GetPlayerStats(url, out playerId);
 
             if (stats == null)

@@ -13,13 +13,12 @@
         <div class="row">
             <input type="text" id="team-id" placeholder="Team ID - hover for help" title="Last part of url from Heroes Lounge &#013;e.g. for heroeslounge.gg/team/view/George%20Cream &#013;id is 'George%20Cream' or 'George Cream'" list="team-names" autocomplete="off"/>
             <datalist id="team-names">
-                @if (!PrimitiveCache.HasKey("team_names")) {
-                    PrimitiveCache.AddOrUpdateItem("team_names", HeroesLoungeScraper.ScrapeTeamUrls().SelectMany(e => e.Value).ToList());
-                }
-
-                @foreach(var team in PrimitiveCache.FetchItem<List<TeamUrlModel>>("team_names"))
-                {
-                    <option value="@team.Url">@team.Name</option>
+                @{ 
+                    var scraper = new HeroesLoungeScraper();
+                    foreach (var team in scraper.ScrapeTeamUrls().SelectMany(e => e.Value).ToList())
+                    {
+                        <option value="@team.Url">@team.Name</option>
+                    }
                 }
             </datalist>
         </div>

@@ -1,4 +1,4 @@
-﻿@model HeroesAggregator.Scraping.Models.TeamModel
+﻿@model HeroesAggregator.Scraping.Models.TeamPlayersModel
 
 @{
     ViewBag.Title = "Team MMR - " + Model.Name;
@@ -28,54 +28,17 @@
             <tbody>
                 @foreach (var player in players)
                 {
-                    var target = "heroes-pref-" + player.PlayerName.Replace(' ', '-');
-
-                    <tr id="@player.PlayerName" data-toggle="player-collapse" class="player-row" data-target=".@target">
+                    var target = "heroes-pref-" + player.Name.Replace(' ', '-');
+                    <tr id="@player.Name" data-toggle="player-collapse" class="player-row" data-target=".@target" player-id="@player.Id">
                         <td><button class="collapse-player-row" data-target=".@target">Show/Hide Hero Stats</button></td>
-                        <td>@player.PlayerName</td>
+                        <td>@player.Name</td>
                         <td>@player.BattleTag</td>
-                        <td>@( player.HeroLeagueMmr == -1 ? "" : player.HeroLeagueMmr.ToString() )</td>
-                        <td>@( player.TeamLeagueMmr == -1 ? "" : player.TeamLeagueMmr.ToString() )</td>
-                        <td>@( player.UnrankedDraftMmr == -1 ? "" : player.UnrankedDraftMmr.ToString() )</td>
-                        <td class="weighted-mmr">@player.WeightedMmr</td>
-                        <td>
-                            <input type="checkbox" class="row-select" />
-                        </td>
                     </tr>
-                    <tr class="player-collapse @target">
-                        <td>
-                            <table class="table">
-                                <thead>
-                                    <th>Hero</th>
-                                    <th>Games Played</th>
-                                    <th>Win %</th>
-                                </thead>
-                                <tbody>
-                                    @if (player.Stats == null)
-                                    {
-                                        <tr>Failed to find HotSLogs profile for player @player.PlayerName</tr>
-                                    }
-                                    else
-                                    {
-                                        foreach (var heroPref in player.Stats.HeroStats)
-                                        {
-                                        <tr>
-                                                <td>@heroPref.Name</td>
-                                                <td>@heroPref.GamesPlayed</td>
-                                                <td>@heroPref.WinPercent</td>
-                                        </tr>
-                                        }
-                                    }
-                                </tbody>
-                            </table>
-                         </td>
-                    </tr>
-
                 }
                 </tbody>
             </table>
 
-        <h3>@("Team MMR: " + Model.AverageMmr.ToString("0.00"))</h3>
+        <h3 id="team-mmr"></h3>
         <h3 id="selected-mmr"></h3>
 
         <div>
