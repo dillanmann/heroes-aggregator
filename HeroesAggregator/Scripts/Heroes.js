@@ -3,11 +3,26 @@
     var teamMmr = 0;
     var players = 0;
 
-    (function getPlayerMmr() {
-        var urlRoot = '/heroes/playermmr?playerid='
+    function createCollapsibleTableRow(target) {
+        var row = $('<tr/>').attr('class', 'player-collapse ' + target);
+        return row.append($('<td/>').append($('<table/>').attr('class', 'table')
+            .append($('<thead>')
+                .append($('<th/>').text('Hero'))
+                .append($('<th/>').text('Games Played'))
+                .append($('<th/>').text("Win %")))
+                .append($('<tbody/>'))));
+    }
+
+    (function getPlayerDetails() {
+        var urlRoot = '/heroes/playermmr?playerid=';
         $.each($('.player-row'), function (index, value) {
-            var url = urlRoot + $(value).attr('player-id');
-            $.getJSON(url, function (data) {
+
+            var playerRow = $(this);
+            var playerId = $(value).attr('player-id');
+
+            // Build the MMR table
+            var mmrUrl = urlRoot + playerId;
+            $.getJSON(mmrUrl, function (data) {
                 var jsonData = JSON.parse(data);
                 var heroLeague = jsonData['HeroLeague'] || 0; 
                 var teamLeague = jsonData['TeamLeague'] || 0;
@@ -23,6 +38,30 @@
                         .append($('<input/>').attr('type', 'checkbox').attr('class', 'row-select')));
 
                 updateTeamMmr(weightedMmr);
+            });
+
+            // Build the collapsible hero stats table
+            var playerName = $(this).find(".player-name").text();
+            var collapseTarget = "heroes-pref-" + playerName.replace(' ', '-');
+            var statsUrl = '/heroes/playerherostats?playerid=' + playerId;
+            $.getJSON(statsUrl, function (data) {
+                var row = createCollapsibleTableRow(collapseTarget);
+                var tbody = row.find('tbody');
+
+                if (!data || data == "null") {
+                    tbody.append($('<tr/>').text('Failed to find HotSLogs profile for player ' + playerName));
+                }
+                else {
+                    var heroStats = JSON.parse(data).HeroStats;
+                    heroStats.forEach(function (obj) {
+                        tbody.append($('<tr/>')
+                            .append($('<td/>').text(obj['Name']))
+                            .append($('<td/>').text(obj['GamesPlayed']))
+                            .append($('<td/>').text(obj['WinPercent'])));
+                    });
+                }
+
+                playerRow.after(row);
             });
         });
     })();
