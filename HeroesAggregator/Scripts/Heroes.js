@@ -20,6 +20,11 @@
             var playerRow = $(this);
             var playerId = $(value).attr('player-id');
 
+            // replace the button with an AJAX loader
+            var expanderButton = playerRow.find($('button'));
+            var buttonClone = expanderButton.clone();
+            replaceElementWithLoader(expanderButton.parent());
+
             // Build the MMR table
             var mmrUrl = urlRoot + playerId;
             $.getJSON(mmrUrl, function (data) {
@@ -48,7 +53,7 @@
                 var row = createCollapsibleTableRow(collapseTarget);
                 var tbody = row.find('tbody');
 
-                if (!data || data == "null") {
+                if (!data || data === "null") {
                     tbody.append($('<tr/>').text('Failed to find HotSLogs profile for player ' + playerName));
                 }
                 else {
@@ -62,6 +67,7 @@
                 }
 
                 playerRow.after(row);
+                playerRow.find('img').replaceWith(buttonClone);
             });
         });
     })();
@@ -106,14 +112,20 @@
 
     // When a player is selected/deselected, update the selected average MMR
     $('div.container-fluid tbody').on('change', '.player-row .row-select', updateSelectedMmr);
-    //$('.player-row .row-select').change(updateSelectedMmr);
-
 
     // Collapse/expand player hero stats tables
-    $("button.collapse-player-row").click(function (ev) {
+    $('div.container-fluid tbody').on('click', "button.collapse-player-row", function (ev) {
         ev.preventDefault();
         var attr = this.getAttribute('data-target');
         $(attr).toggleClass("in");
     });
 
+    // --------------------------------------------------------------------
+    // Utils
+
+    function replaceElementWithLoader(elem) {
+        $(elem).replaceWith($('#loader img').clone().attr("style", "display: block;"));
+    }
+
+    // --------------------------------------------------------------------
 });

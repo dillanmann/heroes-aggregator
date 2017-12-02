@@ -53,54 +53,73 @@ namespace HeroesAggregator.Scraping.Scrapers
             if (string.IsNullOrWhiteSpace(playerId))
                 return null;
 
-            var driver = new PhantomJSDriver();
-            var url = BuildPlayerStatsUrl(playerId);
-
-            driver.Navigate().GoToUrl(url);
-
-            // Open the 'Days to show' selector
-            driver.FindElementById("ctl00_MainContent_DropDownProfileTimeSpan").Click();            
-            var daySelectParent = new WebDriverWait(driver, TimeSpan.FromSeconds(2)).Until(e => {
-                var elem = e.FindElement(By.Id("ctl00_MainContent_DropDownProfileTimeSpan_DropDown"));
-                return elem.GetAttribute("style").Contains("display: block;") ? elem : null;
-            });
-
-            // Select the 'Last X Days' option to show only heroes played in the last so many days
-            var daySelectText = $"Last {days} Days";
-            daySelectParent.FindElements(By.CssSelector("li")).First(e => e.Text == daySelectText).Click();
-
-            // Do the same for the range (i.e. only show heroes that have been played more than x times)
-            driver.FindElementById("ctl00_MainContent_DropDownGamesPlayedRequired").Click();
-            var rangeSelectParent = new WebDriverWait(driver, TimeSpan.FromSeconds(2)).Until(e => {
-                var elem = e.FindElement(By.Id("ctl00_MainContent_DropDownGamesPlayedRequired_DropDown"));
-                return elem.GetAttribute("style").Contains("display: block;") ? elem : null;
-            });
-
-            var rangeSelectText = "5+ Games Played";
-            new WebDriverWait(driver, TimeSpan.FromSeconds(2)).Until(e =>
+            var retries = 5;
+            while (--retries > 0)
             {
-                var elem = rangeSelectParent.FindElements(By.CssSelector("li")).FirstOrDefault(li => li.Text == rangeSelectText);
-                return elem ?? elem;
-            }).Click();
+                try
+                {
+                    using (var driver = new PhantomJSDriver())
+                    {
+                        var url = BuildPlayerStatsUrl(playerId);
 
-            // Find the hero stats in the table and parse the stats out
-            var rows = driver.FindElementsByCssSelector("#RadGridReplayCharacterScoreResultsAverage table tbody tr");
-            var stats = new List<HeroStatsModel>();
-            foreach (var row in rows)
-            {
-                var dataElems = row.FindElements(By.TagName("td"));
-                var heroNameElem = dataElems[0];
-                var gamesPlayedElem = dataElems[2];
-                var winPercentElem = dataElems[3];
+                        driver.Navigate().GoToUrl(url);
 
-                var heroName = heroNameElem.FindElement(By.TagName("a")).GetAttribute("title");
-                var gamesPlayed = gamesPlayedElem.Text;
-                var winPercent = winPercentElem.Text.Replace("%", "");
+                        // Open the 'Days to show' selector
+                        driver.FindElementById("ctl00_MainContent_DropDownProfileTimeSpan").Click();
+                        var daySelectParent = new WebDriverWait(driver, TimeSpan.FromSeconds(2)).Until(e =>
+                        {
+                            var elem = e.FindElement(By.Id("ctl00_MainContent_DropDownProfileTimeSpan_DropDown"));
+                            return elem.GetAttribute("style").Contains("display: block;") ? elem : null;
+                        });
 
-                stats.Add(new HeroStatsModel { Name = WebUtility.HtmlDecode(heroName), GamesPlayed = Convert.ToInt32(gamesPlayed), WinPercent = Convert.ToDouble(winPercent) });
+                        // Select the 'Last X Days' option to show only heroes played in the last so many days
+                        var daySelectText = $"Last {days} Days";
+                        daySelectParent.FindElements(By.CssSelector("li")).First(e => e.Text == daySelectText).Click();
+
+                        // Do the same for the range (i.e. only show heroes that have been played more than x times)
+                        driver.FindElementById("ctl00_MainContent_DropDownGamesPlayedRequired").Click();
+                        var rangeSelectParent = new WebDriverWait(driver, TimeSpan.FromSeconds(2)).Until(e =>
+                        {
+                            var elem = e.FindElement(By.Id("ctl00_MainContent_DropDownGamesPlayedRequired_DropDown"));
+                            return elem.GetAttribute("style").Contains("display: block;") ? elem : null;
+                        });
+
+                        var rangeSelectText = "5+ Games Played";
+                        new WebDriverWait(driver, TimeSpan.FromSeconds(2)).Until(e =>
+                        {
+                            var elem = rangeSelectParent.FindElements(By.CssSelector("li")).FirstOrDefault(li => li.Text == rangeSelectText);
+                            return elem ?? elem;
+                        }).Click();
+
+                        // Find the hero stats in the table and parse the stats out
+                        var rows = driver.FindElementsByCssSelector("#RadGridReplayCharacterScoreResultsAverage table tbody tr");
+                        var stats = new List<HeroStatsModel>();
+                        foreach (var row in rows)
+                        {
+                            var dataElems = row.FindElements(By.TagName("td"));
+                            var heroNameElem = dataElems[0];
+                            var gamesPlayedElem = dataElems[2];
+                            var winPercentElem = dataElems[3];
+
+                            var heroName = heroNameElem.FindElement(By.TagName("a")).GetAttribute("title");
+                            var gamesPlayed = gamesPlayedElem.Text;
+                            var winPercent = winPercentElem.Text.Replace("%", "");
+
+                            stats.Add(new HeroStatsModel { Name = WebUtility.HtmlDecode(heroName), GamesPlayed = Convert.ToInt32(gamesPlayed), WinPercent = Convert.ToDouble(winPercent) });
+                        }
+                        return new PlayerHeroesPreferenceModel { HeroStats = stats.OrderByDescending(e => e.GamesPlayed).ThenByDescending(e => e.WinPercent).ToList(), PlayerId = playerId };
+                    }
+                }
+                catch (StaleElementReferenceException)
+                {
+                    continue;
+                }
+                catch
+                {
+                    return new PlayerHeroesPreferenceModel { HeroStats = new List<HeroStatsModel>(), PlayerId = playerId };
+                }
             }
-
-            return new PlayerHeroesPreferenceModel { HeroStats = stats.OrderByDescending(e => e.GamesPlayed).ThenByDescending(e => e.WinPercent).ToList(), PlayerId = playerId } ;
+            return new PlayerHeroesPreferenceModel { HeroStats = new List<HeroStatsModel>(), PlayerId = playerId };
         }
 
     }
