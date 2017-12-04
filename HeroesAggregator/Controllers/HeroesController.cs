@@ -36,7 +36,7 @@ namespace HeroesAggregator.Controllers
         /// <returns></returns>
         public JsonResult PlayerHeroStats(string playerId)
         {
-            return Json(JsonConvert.SerializeObject(HotSLogsScraper.ScrapeHeroPreferencesPhantomJs(playerId)), JsonRequestBehavior.AllowGet);
+            return Json(JsonConvert.SerializeObject(HotSLogsScraper.ScrapeHeroPreferences(playerId)), JsonRequestBehavior.AllowGet);
         }
 
         /// <summary>
