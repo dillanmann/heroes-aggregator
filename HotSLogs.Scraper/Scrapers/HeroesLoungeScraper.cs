@@ -45,6 +45,8 @@ namespace HeroesAggregator.Scraping.Scrapers
                     continue;
                 }
 
+                playerName = playerName.Replace("\n", "").Replace(" ", "");
+
                 players[playerName] = battleTag;
             }
 
