@@ -24,7 +24,7 @@ namespace HeroesAggregator.Scraping.Scrapers
 
             teamName = WebUtility.HtmlDecode(document.SelectSingleNode("//h1[contains(@class, block-title)]").InnerText);
             var roster = document.SelectSingleNode("//div[@id='general']");
-            var playerCards = roster.SelectNodes("div/div[contains(class, card-deck)]/div[contains(class, card)]/div[@class='card-body']");
+            var playerCards = roster.SelectNodes("div/div/div[contains(class, blogPostWrapper)]");
 
             if (playerCards == null || playerCards.Count == 0)
                 return null;
@@ -32,9 +32,11 @@ namespace HeroesAggregator.Scraping.Scrapers
             var players = new Dictionary<string, string>();
             foreach (var card in playerCards)
             {
-                var playerName = card.SelectSingleNode("h4[@class='card-title']/a").InnerText;
-                var cardTexts = card.SelectNodes("p[@class='card-text']");
-                var battleTag = cardTexts.FirstOrDefault(e => e.SelectNodes("img[@title='Battle Tag']") != null)?.InnerText
+                var playerName = card.SelectSingleNode("a/h3[@class='text-truncate']").InnerText;
+
+                var cardTexts = card.SelectNodes("div[@class='blogFPSummary']/div");
+                var battleTagElem = cardTexts.Select(e => e.SelectSingleNode("div/img[@title='Battle Tag']/following-sibling::a")).FirstOrDefault();
+                var battleTag = (battleTagElem == null ? string.Empty : battleTagElem.InnerText)
                     .Replace("\n", "").Replace(" ", "");
 
                 if (string.IsNullOrWhiteSpace(playerName) || string.IsNullOrWhiteSpace(battleTag))

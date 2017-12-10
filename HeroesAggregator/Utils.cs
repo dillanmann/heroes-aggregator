@@ -9,9 +9,10 @@ namespace HeroesAggregator
 {
     public static class Utils
     {
-        public static int GetVersionNumber()
+        public static string GetVersionInfo()
         {
-            return Convert.ToInt32(System.Text.Encoding.Default.GetString(Properties.Resources.version));
+            var version = System.Text.Encoding.Default.GetString(Properties.Resources.version);
+            return version;
         }
     }
 }

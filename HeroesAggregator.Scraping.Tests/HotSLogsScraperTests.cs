@@ -16,6 +16,15 @@ namespace HeroesAggregator.Scraping.Tests
         {
             HotSLogsScraper.ScrapeHeroPreferences("459446");
         }
+
+        [TestMethod]
+        public void TestHeroesLoungePlayerScraping()
+        {
+            var scraper = new HeroesLoungeScraper();
+            var players = scraper.ScrapeTeamPlayers("george cream");
+
+            Assert.AreEqual(7, players.Players.Count);
+        }
         // todo 
         // Test case for null coming from HotsLogs
     }

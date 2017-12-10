@@ -28,6 +28,9 @@ namespace HeroesAggregator.Scraping.Scrapers
 
             var rows = document.SelectNodes("//div[@id='RadGridReplayCharacterScoreResultsAverage']/table/tbody/tr");
             var stats = new List<HeroStatsModel>();
+            if (rows == null || !rows.Any())
+                return null;
+
             foreach (var row in rows)
             {
                 var dataElems = row.SelectNodes("td");
