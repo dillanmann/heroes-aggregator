@@ -47,7 +47,9 @@
 
             // Build the collapsible hero stats table
             var playerName = $(this).find(".player-name").text();
-            var collapseTarget = "heroes-pref-" + playerName.replace(' ', '-');
+            var collapseTarget = $(this).attr('data-target');//"heroes-pref-" + playerName.replace(' ', '-');
+            if (collapseTarget.startsWith('.'))
+                collapseTarget = collapseTarget.substring(1);
             var statsUrl = '/heroes/playerherostats?playerid=' + playerId;
             $.getJSON(statsUrl, function (data) {
                 var row = createCollapsibleTableRow(collapseTarget);

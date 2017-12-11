@@ -32,7 +32,7 @@
             <tbody>
                 @foreach (var player in players)
                 {
-                    var target = "heroes-pref-" + player.Name.Replace(' ', '-');
+                    var target = "heroes-pref-" + player.Name.Replace(' ', '-').Replace('[', '-').Replace(']', '-');
                     <tr id="@player.Name" data-toggle="player-collapse" class="player-row" data-target=".@target" player-id="@player.Id">
                         <td>
                             <button class="collapse-player-row" data-target=".@target">Show/Hide Hero Stats</button>
